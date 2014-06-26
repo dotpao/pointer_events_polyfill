@@ -8,6 +8,7 @@ function PointerEventsPolyfill(options){
     // set defaults
     this.options = {
         selector: '*',
+        cancel: '',
         mouseEvents: ['click','dblclick','mousedown','mouseup'],
         usePolyfillIf: function(){
             if(navigator.appName == 'Microsoft Internet Explorer')
@@ -43,7 +44,8 @@ PointerEventsPolyfill.initialize = function(options){
 // handle mouse events w/ support for pointer-events: none
 PointerEventsPolyfill.prototype.register_mouse_events = function(){
     // register on all elements (and all future elements) matching the selector
-    $(document).on(this.options.mouseEvents.join(" "), this.options.selector, function(e){
+    $(document).on(this.options.mouseEvents.join(" "), this.options.selector, {cancel: this.options.cancel}, function(e){
+       if($(e.originalEvent.srcElement).closest(e.data.cancel).length > 0) return true;
        if($(this).css('pointer-events') == 'none'){
              // peak at the element below
              var origDisplayAttribute = $(this).css('display');
